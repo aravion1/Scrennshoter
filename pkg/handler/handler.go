@@ -1,16 +1,23 @@
 package handler
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/aravion1/Scrennshoter/pkg/service"
+	"github.com/gin-gonic/gin"
+)
 
-type Handler struct{}
+type Handler struct {
+	services *service.Service
+}
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(s *service.Service) *Handler {
+	return &Handler{services: s}
 }
 
 func (h *Handler) GetHandlers() *gin.Engine {
 	handler := gin.New()
+
 	handler.Use(Auth())
-	handler.GET("get-image-by-url", h.getImageByUrl)
+
+	handler.POST("get-image-by-url", h.getImageByUrl)
 	return handler
 }
