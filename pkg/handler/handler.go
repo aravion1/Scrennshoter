@@ -19,6 +19,6 @@ func (h *Handler) GetHandlers() *gin.Engine {
 	handler.Use(Auth())
 
 	handler.POST("get-image-by-url", h.getImageByUrl)
-	handler.POST("get-element-image-by-url")
+	handler.POST("get-element-image-by-url", h.getElementImageByUrl)
 	return handler
 }

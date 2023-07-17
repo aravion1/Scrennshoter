@@ -46,7 +46,6 @@ func (h *Handler) getImageByUrl(c *gin.Context) {
 func (h *Handler) getElementImageByUrl(c *gin.Context) {
 	p := structs.Params{
 		Url:    Request.Page_url,
-		IsFull: Request.IsFull,
 		Width:  Request.Width,
 		Height: Request.Height,
 		Sel:    Request.Selector,
