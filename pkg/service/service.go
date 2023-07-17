@@ -6,8 +6,8 @@ import (
 )
 
 type ImageGenerator interface {
-	GetImage(p structs.Params) []byte
-	screenshotTasks(url string, imageBuf *[]byte) chromedp.Tasks
+	GetImage(p structs.Params) ([]byte, error)
+	GetFullPageImage(p structs.Params, res *[]byte) chromedp.Tasks
 }
 
 type Service struct {
