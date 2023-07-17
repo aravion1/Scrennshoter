@@ -1,12 +1,8 @@
 package handler
 
 import (
-	b64 "encoding/base64"
-	"net/http"
-
 	"github.com/aravion1/Scrennshoter/structs"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 )
 
 type ImageRequest struct {
@@ -25,7 +21,7 @@ type ImageResponse struct {
 }
 
 var Request = ImageRequest{
-	IsFull:   true,
+	IsFull:   false,
 	Width:    1920,
 	Height:   1080,
 	IsRow:    false,
@@ -43,17 +39,21 @@ func (h *Handler) getImageByUrl(c *gin.Context) {
 
 	image, err := h.services.ImageGenerator.GetImage(p)
 
-	if err != nil {
-		logrus.Error(err)
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
+	response(c, image, err)
+	return
+}
+
+func (h *Handler) getElementImageByUrl(c *gin.Context) {
+	p := structs.Params{
+		Url:    Request.Page_url,
+		IsFull: Request.IsFull,
+		Width:  Request.Width,
+		Height: Request.Height,
+		Sel:    Request.Selector,
 	}
 
-	if Request.IsRow {
-		c.JSON(http.StatusOK, b64.StdEncoding.EncodeToString(image))
-		return
-	}
+	image, err := h.services.ImageGenerator.GetElementImageByUrl(p)
 
-	c.Writer.Write(image)
+	response(c, image, err)
 	return
 }

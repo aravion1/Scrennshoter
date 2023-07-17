@@ -13,14 +13,15 @@ func NewImageGenerator() *Image {
 	return &Image{}
 }
 
+var img []byte
+var err error
+
 func (ig *Image) GetImage(params structs.Params) ([]byte, error) {
 
-	var img []byte
-	var err error
 	if params.IsFull {
-		err = ig.screenshot(ig.GetFullPageImage(params, &img))
+		err = ig.screenshot(ig.getFullPageImage(params, &img))
 	} else {
-		err = ig.screenshot(ig.GetPageImage(params, &img))
+		err = ig.screenshot(ig.getPageImage(params, &img))
 	}
 
 	if err != nil {
@@ -28,10 +29,17 @@ func (ig *Image) GetImage(params structs.Params) ([]byte, error) {
 	}
 
 	return img, nil
-
 }
 
-func (ig *Image) GetFullPageImage(p structs.Params, res *[]byte) chromedp.Tasks {
+func (ig *Image) GetElementImageByUrl(p structs.Params) ([]byte, error) {
+	ig.screenshot(ig.getElementImage(p, &img))
+	if err != nil {
+		return nil, err
+	}
+	return img, nil
+}
+
+func (ig *Image) getFullPageImage(p structs.Params, res *[]byte) chromedp.Tasks {
 	return chromedp.Tasks{
 		chromedp.Navigate(p.Url),
 		chromedp.EmulateViewport(p.Width, p.Height),
@@ -39,11 +47,19 @@ func (ig *Image) GetFullPageImage(p structs.Params, res *[]byte) chromedp.Tasks 
 	}
 }
 
-func (ig *Image) GetPageImage(p structs.Params, res *[]byte) chromedp.Tasks {
+func (ig *Image) getPageImage(p structs.Params, res *[]byte) chromedp.Tasks {
 	return chromedp.Tasks{
 		chromedp.Navigate(p.Url),
 		chromedp.EmulateViewport(p.Width, p.Height),
 		chromedp.CaptureScreenshot(res),
+	}
+}
+
+func (ig *Image) getElementImage(p structs.Params, res *[]byte) chromedp.Tasks {
+	return chromedp.Tasks{
+		chromedp.Navigate(p.Url),
+		chromedp.EmulateViewport(p.Width, p.Height),
+		chromedp.Screenshot(p.Sel, res),
 	}
 }
 
