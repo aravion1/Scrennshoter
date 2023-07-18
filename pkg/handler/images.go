@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/aravion1/Scrennshoter/structs"
 	"github.com/gin-gonic/gin"
 )
@@ -29,30 +31,56 @@ var Request = ImageRequest{
 }
 
 func (h *Handler) getImageByUrl(c *gin.Context) {
+
+	var request = ImageRequest{
+		IsFull:   false,
+		Width:    1920,
+		Height:   1080,
+		IsRow:    false,
+		Selector: "body",
+	}
+
+	if err := c.BindJSON(&request); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	p := structs.Params{
-		Url:    Request.Page_url,
-		IsFull: Request.IsFull,
-		Width:  Request.Width,
-		Height: Request.Height,
-		Sel:    Request.Selector,
+		Url:    request.Page_url,
+		IsFull: request.IsFull,
+		Width:  request.Width,
+		Height: request.Height,
 	}
 
 	image, err := h.services.ImageGenerator.GetImage(p)
 
-	response(c, image, err)
+	response(c, image, err, request)
 	return
 }
 
 func (h *Handler) getElementImageByUrl(c *gin.Context) {
+	var request = ImageRequest{
+		IsFull:   false,
+		Width:    1920,
+		Height:   1080,
+		IsRow:    false,
+		Selector: "body",
+	}
+
+	if err := c.BindJSON(&request); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	p := structs.Params{
-		Url:    Request.Page_url,
-		Width:  Request.Width,
-		Height: Request.Height,
-		Sel:    Request.Selector,
+		Url:    request.Page_url,
+		Width:  request.Width,
+		Height: request.Height,
+		Sel:    request.Selector,
 	}
 
 	image, err := h.services.ImageGenerator.GetElementImageByUrl(p)
 
-	response(c, image, err)
+	response(c, image, err, request)
 	return
 }

@@ -17,14 +17,14 @@ func newErrorResponse(c *gin.Context, statusCode int, message string) {
 	c.AbortWithStatusJSON(statusCode, Error{message})
 }
 
-func response(c *gin.Context, image []byte, err error) {
+func response(c *gin.Context, image []byte, err error, request ImageRequest) {
 	if err != nil {
 		logrus.Error(err)
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if Request.IsRow {
+	if request.IsRow {
 		c.JSON(http.StatusOK, b64.StdEncoding.EncodeToString(image))
 		return
 	}
